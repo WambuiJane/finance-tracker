@@ -1,0 +1,17 @@
+node_modules/
+__tests__/
+__mocks__/
+coverage/
+cypress/screenshots
+cypress/downloads
+cypress/videos
+Dockerfile
+.dockerignore
+node_modules
+npm-debug.log
+README.md
+tsconfig.tsbuildinfo
+.swc
+.next
+.git
+certificates

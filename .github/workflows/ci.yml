@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  build-and-analyze:
+    name: Build and Analyze
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout code with history for SonarQube
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required for SonarQube to analyze all history
+      
+      # Setup Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+      
+      # Install dependencies  
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      
+      # Run linting
+      - name: Lint code
+        run: yarn lint
+        
+      # Run tests with coverage
+      - name: Run tests
+        run: yarn test --coverage
+
+      # SonarQube Analysis
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      # Build application
+      - name: Build application
+        run: yarn build
+      
+      # Build Docker image
+      - name: Build Docker image
+        run: docker build -t finance-tracker-frontend:latest .
+
+      # Push to Docker registry
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - name: Push Docker image
+        run: |
+          docker tag finance-tracker-frontend:latest ${{ secrets.DOCKER_USERNAME }}/finance-tracker-frontend:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/finance-tracker-frontend:latest
