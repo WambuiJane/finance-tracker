@@ -23,7 +23,7 @@ pipeline {
     }
     stage('Docker Build') {
       steps {
-        sh 'docker build -t my-frontend-app .'
+        sh 'docker build -t finance-tracker-frontend:latest .'
       }
     }
   }
