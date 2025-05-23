@@ -52,7 +52,7 @@ jobs:
 
       # Trivy scan
       - name: Trivy Scan
-        uses: aquasecurity/trivy-action@v0.30.0
+        uses: aquasecurity/trivy-action@2a2157eb22c08c9a1fac99692a0130f5ef3c3a52
         with:
           image-ref: finance-tracker-frontend:latest
 
